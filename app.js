@@ -107,38 +107,43 @@ const createTour = (req, res) => {
 };
 
 //users route handeler
-const getAllUsers = (req, res)=>{
-    res.status(500).json({
-        status: 'fail',
-        message: 'route not yet defined'
-    })
-}
-const createUser = (req, res)=>{
-    res.status(500).json({
-        status: 'fail',
-        message: 'route not yet defined'
-    })
-}
-const getUser = (req, res)=>{
-    res.status(500).json({
-        status: 'fail',
-        message: 'route not yet defined'
-    })
-}
-const updateUser = (req, res)=>{
-    res.status(500).json({
-        status: 'fail',
-        message: 'route not yet defined'
-    })
-}
-const deleteUser = (req, res)=>{
-    res.status(500).json({
-        status: 'fail',
-        message: 'route not yet defined'
-    })
-}
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 'fail',
+    message: 'route not yet defined',
+  });
+};
+const createUser = (req, res) => {
+  res.status(500).json({
+    status: 'fail',
+    message: 'route not yet defined',
+  });
+};
+const getUser = (req, res) => {
+  res.status(500).json({
+    status: 'fail',
+    message: 'route not yet defined',
+  });
+};
+const updateUser = (req, res) => {
+  res.status(500).json({
+    status: 'fail',
+    message: 'route not yet defined',
+  });
+};
+const deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 'fail',
+    message: 'route not yet defined',
+  });
+};
 
 //Routes
+//mounting routes
+const tourRouter = express.Router();
+const userRouter = express.Router();
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
 
 // app.post('/api/v1/tours', createTour);
 // app.get('/api/v1/tours', getAllTours);
@@ -146,16 +151,16 @@ const deleteUser = (req, res)=>{
 // app.patch('/api/v1/tours/:id', updateTour);
 // app.delete('/api/v1/tours/:id', deleteTour);
 
-    //tour routes
-app.route('/api/v1/tours').get(getAllTours).post(createTour);
-app
-  .route('/api/v1/tours/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+//tour routes
+tourRouter.route('/').get(getAllTours).post(createTour);
+tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
 
-  //user routes
-app.route('/api/v1/users').get(getAllUsers).post(createUser);
-app.route('/api/v1/users/:id').get(getUser).patch(updateUser).delete(deleteUser)
+//user routes
+userRouter.route('/').get(getAllUsers).post(createUser);
+userRouter
+  .route('/:id')
+  .get(getUser)
+  .patch(updateUser)
+  .delete(deleteUser);
 
 module.exports = app;
