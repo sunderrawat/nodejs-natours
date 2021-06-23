@@ -1,18 +1,6 @@
-const Tour = require('./../model/tourModel')
+const Tour = require('./../model/tourModel');
 
 //Route handelr functions
-exports.checkBody = (req, res, next) => {
-//   if (!(req.body.hasOwnProperty('name') || req.body.hasOwnProperty('price'))) {
-  if (!req.body.name || !req.body.price) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'name and price property not given by you',
-    });
-  }
-
-  next();
-};
-
 exports.getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -50,9 +38,17 @@ exports.deleteTour = (req, res) => {
   });
 };
 
-exports.createTour = (req, res) => {
-  res.status(201).json({
-    status: 'success',
-    // data: newTour,
-  });
+exports.createTour = async (req, res) => {
+  try {
+    const newTour = await Tour.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      data: newTour,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err,
+    });
+  }
 };
