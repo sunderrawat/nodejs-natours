@@ -36,6 +36,18 @@ app.get('/api/v1/tours/:id', (req, res) => {
   });
 });
 
+app.patch('/api/v1/tours/:id', (req, res) => {
+  //   console.log(req.params);
+  const findOneTour = tours.find((el) => el.id === +req.params.id);
+  if (!findOneTour) {
+    return res.status(404).json({ status: 'fail', message: 'Invallid id' });
+  }
+  res.status(200).json({
+    status: 'success',
+    message: 'updating tour...',
+  });
+});
+
 app.post('/api/v1/tours', (req, res) => {
   //   const addTour = tours.push(req.body);
   //   fs.writeFileSync(
