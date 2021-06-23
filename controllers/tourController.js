@@ -5,6 +5,18 @@ const tours = JSON.parse(
 );
 
 //Route handelr functions
+exports.checkBody = (req, res, next) => {
+//   if (!(req.body.hasOwnProperty('name') || req.body.hasOwnProperty('price'))) {
+  if (!req.body.name || !req.body.price) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'name and price property not given by you',
+    });
+  }
+
+  next();
+};
+
 exports.checkId = (req, res, next, val) => {
   //   console.log(`your id is ${val}`);
   const findOneTour = tours.find((el) => el.id === +val);
