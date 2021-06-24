@@ -1,3 +1,4 @@
+const { query } = require('express');
 const { findByIdAndDelete } = require('./../model/tourModel');
 const Tour = require('./../model/tourModel');
 
@@ -5,18 +6,24 @@ const Tour = require('./../model/tourModel');
 exports.getAllTours = async (req, res) => {
   try {
     // const tours = await Tour.find();
-    //query
-    console.log(req.query);
+    //query filltering
+    // console.log(req.query);\
     const queryObj = { ...req.query };
     const excludeFields = ['page', 'sort', 'limit', 'fields'];
     excludeFields.forEach((el) => delete queryObj[el]);
-    console.log(queryObj);
+    // console.log(queryObj);
 
     // const tours = await Tour.find({duration: 5, difficulty: 'easy'});
     // const tours = await Tour.find({duration: {$lte: 5}});
     // const tours = await Tour.find(req.query);
-    const tours = await Tour.find(queryObj);
 
+    //advanced filltering
+    //localhost:3000/api/v1/tours?duration[lte]=5&difficulty=easy
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (el) => `$${el}`);
+
+    const query = Tour.find(JSON.parse(queryStr));
+    const tours = await query;
     // const tours = await Tour.find()
     //   .where('duration')
     //   .lte(10)
