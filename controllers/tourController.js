@@ -35,7 +35,16 @@ exports.getAllTours = async (req, res) => {
       const sortBy = req.query.sort.split(',').join(' ');
       queryTour = queryTour.sort(sortBy);
     } else {
-      queryTour = queryTour.sort('createdAt');
+      queryTour = queryTour.sort('-createdAt');
+    }
+
+    //limiting fields or selecting fields
+    // localhost:3000/api/v1/tours?fields=name,price,duration
+    if (req.query.fields) {
+      const fields = req.query.fields.split(',').join(' ');
+      queryTour = queryTour.select(fields);
+    } else {
+      queryTour = queryTour.select('-__v');
     }
 
     const tours = await queryTour;
