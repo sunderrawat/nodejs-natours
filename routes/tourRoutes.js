@@ -10,7 +10,8 @@ router.param('id', (req, res, next, val) => {
   next();
 });
 
-//tour routes
+router.route('/top-5-tours').get(tourController.aliasTopTour ,tourController.getAllTours)
+
 router
   .route('/')
   .get(tourController.getAllTours)

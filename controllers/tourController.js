@@ -2,7 +2,14 @@ const { query } = require('express');
 const { findByIdAndDelete } = require('./../model/tourModel');
 const Tour = require('./../model/tourModel');
 
-//Route handelr functions
+exports.aliasTopTour = (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,duration,ratingsAverage,price';
+
+  next();
+};
+
 exports.getAllTours = async (req, res) => {
   try {
     // const tours = await Tour.find();
@@ -47,7 +54,7 @@ exports.getAllTours = async (req, res) => {
       queryTour = queryTour.select('-__v');
     }
 
-    //pagination  
+    //pagination
     //localhost:3000/api/v1/tours?page=2&limit=4
     const page = req.query.page * 1 || 1;
     const limit = req.query.limit * 1 || 100;
@@ -55,9 +62,9 @@ exports.getAllTours = async (req, res) => {
 
     queryTour = queryTour.skip(skip).limit(limit);
 
-    if(req.query.page){
+    if (req.query.page) {
       const numTour = await Tour.countDocuments();
-      if(skip >= numTour) throw new Error('This page is not exist')
+      if (skip >= numTour) throw new Error('This page is not exist');
     }
 
     const tours = await queryTour;
