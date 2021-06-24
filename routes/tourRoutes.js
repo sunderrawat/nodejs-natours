@@ -9,13 +9,6 @@ router.param('id', (req, res, next, val) => {
   console.log(`your id is ${val}`);
   next();
 });
-// router.param('id', tourController.checkId);
-
-// app.post('/api/v1/tours', createTour);
-// app.get('/api/v1/tours', getAllTours);
-// app.get('/api/v1/tours/:id', getTour);
-// app.patch('/api/v1/tours/:id', updateTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
 
 //tour routes
 router
