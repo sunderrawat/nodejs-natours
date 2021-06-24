@@ -16,19 +16,29 @@ exports.getAllTours = async (req, res) => {
     // const tours = await Tour.find({duration: 5, difficulty: 'easy'});
     // const tours = await Tour.find({duration: {$lte: 5}});
     // const tours = await Tour.find(req.query);
+    // const tours = await Tour.find()
+    //   .where('duration')
+    //   .lte(10)
+    //   .where('difficulty')
+    //   .equals('easy');
 
     //advanced filltering
     //localhost:3000/api/v1/tours?duration[lte]=5&difficulty=easy
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (el) => `$${el}`);
 
-    const query = Tour.find(JSON.parse(queryStr));
-    const tours = await query;
-    // const tours = await Tour.find()
-    //   .where('duration')
-    //   .lte(10)
-    //   .where('difficulty')
-    //   .equals('easy');
+    let queryTour = Tour.find(JSON.parse(queryStr));
+
+    //sorting
+    //localhost:3000/api/v1/tours?sort=price,ratingsAverage
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ');
+      queryTour = queryTour.sort(sortBy);
+    } else {
+      queryTour = queryTour.sort('createdAt');
+    }
+
+    const tours = await queryTour;
 
     res.status(200).json({
       status: 'success',
