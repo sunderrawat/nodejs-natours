@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
+
 //create a tour schema
 const tourSchema = new mongoose.Schema(
   {
@@ -16,10 +18,16 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       default: 4.5,
     },
-    ratingsQuantity: Number,
+    ratingsQuantity: {
+      type: Number,
+      default: 0,
+    },
     maxGroupSize: Number,
     duration: Number,
-    difficulty: String,
+    difficulty: {
+      type: String,
+      required: [true, 'A tour must have a defficulty'],
+    },
     summary: {
       type: String,
       trim: true,
@@ -28,7 +36,6 @@ const tourSchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
-      required: [true, 'A tour must have a description'],
     },
     imageCover: {
       type: String,
@@ -41,6 +48,9 @@ const tourSchema = new mongoose.Schema(
       default: Date.now(),
       select: false,
     },
+    slug: {
+      type: String,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -51,6 +61,25 @@ const tourSchema = new mongoose.Schema(
 //virtuals
 tourSchema.virtual('durationWeek').get(function () {
   return this.duration / 7;
+});
+
+//document pre middelware before .save() and .create()
+tourSchema.pre('save', function (next) {
+  // console.log(this);
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+tourSchema.pre('save', function (next) {
+  console.log('saving the document...');
+  console.log(this);
+  next();
+});
+
+//after saving document this middelware run
+tourSchema.post('save', function (doc, next) {
+  console.log(doc);
+  next();
 });
 
 //define a tour model
