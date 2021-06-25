@@ -48,6 +48,10 @@ const tourSchema = new mongoose.Schema(
       default: Date.now(),
       select: false,
     },
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
     slug: {
       type: String,
     },
@@ -70,15 +74,28 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
-tourSchema.pre('save', function (next) {
-  console.log('saving the document...');
-  console.log(this);
+// tourSchema.pre('save', function (next) {
+//   console.log('saving the document...');
+//   console.log(this);
+//   next();
+// });
+
+// //after saving document this middelware run
+// tourSchema.post('save', function (doc, next) {
+//   console.log(doc);
+//   next();
+// });
+
+//query middelware
+tourSchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
+  // this.find({ ratingsAverage: { $eq: 4.5 } });
+  // console.log(this)
+  this.start = Date.now();
   next();
 });
-
-//after saving document this middelware run
-tourSchema.post('save', function (doc, next) {
-  console.log(doc);
+tourSchema.post(/^find/, function (doc, next) {
+  console.log('time for post ', Date.now() - this.start, ' milliseconds');
   next();
 });
 
