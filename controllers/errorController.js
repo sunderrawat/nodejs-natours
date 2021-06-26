@@ -1,7 +1,23 @@
+const AppError = require('./../utils/appError');
+const handleCastErrDB = (err) => {
+  const message = `Invalid ${err.path}: ${err.value}`;
+  return new AppError(message, 400);
+};
+
+const handleDuplicateErrDB = (err) => {
+  const message = `Duplicate field value / ${err.keyValue.name} / please use another`;
+  return new AppError(message, 400);
+};
+const handleValidarionErrDB = (err) => {
+  const errors = Object.values(err.errors).map((el) => el.message);
+  const message = `Invalid input data ${errors.join('. ')}`;
+  return new AppError(message, 400);
+};
+
 const sendProdError = (err, res) => {
   if (!err.isOperational) {
     console.error('ERROR 💥 💥', err);
-    res.status(500).json({
+    return res.status(500).json({
       status: 'error',
       message: 'Something went very wrong!! 😧',
     });
@@ -29,6 +45,11 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendDevError(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    sendProdError(err, res);
+    let error = { ...err };
+    if (err.name === 'CastError') error = handleCastErrDB(error);
+    if (error.code === 11000) error = handleDuplicateErrDB(error);
+    if (err.name === 'ValidationError') error = handleValidarionErrDB(error);
+
+    sendProdError(error, res);
   }
 };

@@ -4,13 +4,9 @@ const tourController = require('./../controllers/tourController');
 
 const router = express.Router();
 
-//param middleware
-router.param('id', (req, res, next, val) => {
-  console.log(`your id is ${val}`);
-  next();
-});
-
-router.route('/top-5-tours').get(tourController.aliasTopTour ,tourController.getAllTours)
+router
+  .route('/top-5-tours')
+  .get(tourController.aliasTopTour, tourController.getAllTours);
 
 router.route('/tour-stats').get(tourController.getTourStats);
 router.route('/get-monthly-plan/:year').get(tourController.getMonthlyPlan);
