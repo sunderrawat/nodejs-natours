@@ -21,7 +21,7 @@ mongoose
   .then((con) => {
     console.log('DB connected sucessfully...');
   })
-  .catch(() => {
+  .catch((err) => {
     console.log('error in database during connection 💥');
   });
 

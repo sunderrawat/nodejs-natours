@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     minlength: [6, 'minimum 6 chars'],
     maxlength: [20, 'maximum 20 chars'],
     trim: true,
-    select: false
+    select: false,
   },
   passwordConfirm: {
     type: String,
@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema({
       message: 'password not matched',
     },
   },
+  passwordChangedAt: Date,
 });
 
 userSchema.pre('save', async function (next) {
@@ -52,9 +53,26 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.methods.correctPassword = async function(enteredPassword, userPassword){
+userSchema.methods.correctPassword = async function (
+  enteredPassword,
+  userPassword
+) {
   return await bcrypt.compare(enteredPassword, userPassword);
-}
+};
+
+userSchema.methods.passwordChangedAfter = function (iatJwt) {
+  if (this.passwordChangedAt) {
+    const changedTimeStamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+      );
+      // console.log(iatJwt > changedTimeStamp);
+      return iatJwt > changedTimeStamp;
+  }
+
+  //return false means not changed
+  return false;
+};
 
 const User = mongoose.model('User', userSchema);
 

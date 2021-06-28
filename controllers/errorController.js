@@ -13,6 +13,12 @@ const handleValidarionErrDB = (err) => {
   const message = `Invalid input data ${errors.join('. ')}`;
   return new AppError(message, 400);
 };
+const handleInvalidSigJwt = (err) => {
+  return new AppError('Invalid token, Login again', 401);
+};
+const handleTokenExpireJwt = (err) => {
+  return new AppError('Token Expired, Login again', 401);
+};
 
 const sendProdError = (err, res) => {
   if (!err.isOperational) {
@@ -49,6 +55,8 @@ module.exports = (err, req, res, next) => {
     if (err.name === 'CastError') error = handleCastErrDB(error);
     if (error.code === 11000) error = handleDuplicateErrDB(error);
     if (err.name === 'ValidationError') error = handleValidarionErrDB(error);
+    if (err.name === 'JsonWebTokenError') error = handleInvalidSigJwt(error);
+    if (err.name === 'TokenExpiredError') error = handleTokenExpireJwt(error);
 
     sendProdError(error, res);
   }
