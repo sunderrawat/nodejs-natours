@@ -162,11 +162,41 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   //2 set user password
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
-  user.passwordResetToken= undefined;
-  user.passwordResetExpires= undefined;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
   await user.save();
   //3 update changedPasswordAt propert for user on userModel pre fun
   //4 login and send jwt token
+  const token = genrateToken(user._id);
+  res.status(200).json({
+    status: 'sucess',
+    token,
+  });
+});
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  //1 find user
+  const user = await User.findById(req.user._id).select('+password');
+
+  //2 check posted password is correct
+  const checkPassword = await user.correctPassword(
+    req.body.postedPassword,
+    user.password
+  );
+  if (!checkPassword)
+    return next(
+      new AppError(
+        'current password is not matched Try again with correct password',
+        401
+      )
+    );
+
+  //3 if correct then update it
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+
+  //send success response and jwt token
   const token = genrateToken(user._id);
   res.status(200).json({
     status: 'sucess',
