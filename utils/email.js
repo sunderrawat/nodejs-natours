@@ -11,16 +11,6 @@ const sendEmail = async (options) => {
     },
   });
 
-  //create transporter from ethereal.email
-  //   const transporter = nodemailer.createTransport({
-  //     host: 'smtp.ethereal.email',
-  //     port: 587,
-  //     auth: {
-  //       user: 'demetrius.stroman96@ethereal.email',
-  //       pass: '2wrAzSWsE2MZ832Rpd',
-  //     },
-  //   });
-
   //define the email option
   const mailOptions = {
     from: 'Sunder Rawat <sunderrawat777@gmail.com>',

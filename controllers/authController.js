@@ -1,7 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { promisify } = require('util');
 const crypto = require('crypto');
-// const bcrypt = require('bcryptjs');
 const User = require('./../model/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
@@ -10,6 +8,16 @@ const sendEmail = require('./../utils/email');
 const genrateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
+
+const createSendTokenRes = (user, statusCode, res) => {
+  const token = genrateToken(user._id);
+
+  res.status(statusCode).json({
+    status: 'success',
+    statusCode,
+    token,
   });
 };
 
@@ -22,15 +30,8 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 
   //create jwt token
-  // const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
-  const token = genrateToken(newUser._id);
-
-  res.status(201).json({
-    status: 'sucess',
-    statusCode: 201,
-    token,
-    user: newUser,
-  });
+  createSendTokenRes(newUser, 201, res);
+  // const token = genrateToken(newUser._id);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -50,11 +51,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   //if everything is ok then send token to client
-  const token = genrateToken(user._id);
-  res.status(200).json({
-    status: 'sucess',
-    token,
-  });
+  createSendTokenRes(user, 200, res);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -72,9 +69,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   //verify jwt token
-  // const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-  // console.log(decoded);
 
   //token belongs to current user
   const currentUser = await User.findById(decoded.id);
@@ -167,11 +162,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
   //3 update changedPasswordAt propert for user on userModel pre fun
   //4 login and send jwt token
-  const token = genrateToken(user._id);
-  res.status(200).json({
-    status: 'sucess',
-    token,
-  });
+  createSendTokenRes(user, 200, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -197,9 +188,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   //send success response and jwt token
-  const token = genrateToken(user._id);
-  res.status(200).json({
-    status: 'sucess',
-    token,
-  });
+  createSendTokenRes(user, 200, res);
 });
