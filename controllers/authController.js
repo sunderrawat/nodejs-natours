@@ -1,9 +1,11 @@
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
+const crypto = require('crypto');
 // const bcrypt = require('bcryptjs');
 const User = require('./../model/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const sendEmail = require('./../utils/email');
 
 const genrateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -116,9 +118,58 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   //send it to user email
-  res.status(200).json({
-    status: 'sucess',
-  });
+  const resetUrl = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/users/resetPassword/${resetToken}`;
+  const message = `Forgot your password? Submit with new password and confirmPassword to: ${resetUrl}. \n If you didn't forgot password then ignore it.`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Forgot Your Password for Natours',
+      message,
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Token sent on your email',
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(new AppError('There was an error during sending email', 500));
+  }
 });
 
-exports.resetPassword = (req, res, next) => {};
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  //1 find user from token and check token is expired
+  const hashToken = crypto
+    .createHash('sha256')
+    .update(req.params.resetToken)
+    .digest('hex');
+
+  const user = await User.findOne({
+    passwordResetToken: hashToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new AppError('Token is invalid or expired!', 403));
+  }
+
+  //2 set user password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken= undefined;
+  user.passwordResetExpires= undefined;
+  await user.save();
+  //3 update changedPasswordAt propert for user on userModel pre fun
+  //4 login and send jwt token
+  const token = genrateToken(user._id);
+  res.status(200).json({
+    status: 'sucess',
+    token,
+  });
+});
