@@ -105,7 +105,7 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    guides: [{ type: mongoose.Schema.ObjectId, rel: 'User' }],
+    guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   },
   {
     toJSON: { virtuals: true },
@@ -152,6 +152,15 @@ tourSchema.pre(/^find/, function (next) {
   this.start = Date.now();
   next();
 });
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+  next();
+});
+
 tourSchema.post(/^find/, function (doc, next) {
   console.log('time for post ', Date.now() - this.start, ' milliseconds');
   next();
