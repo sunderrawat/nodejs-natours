@@ -10,6 +10,8 @@ router.route('/login').post(authController.login);
 router.route('/forgotPassword').post(authController.forgotPassword);
 router.route('/resetPassword/:resetToken').patch(authController.resetPassword);
 
+router.get('/me', authController.protect, userController.getMe, userController.getUser);
+
 router
   .route('/updateMyPassword')
   .patch(authController.protect, authController.updatePassword);
@@ -26,6 +28,10 @@ router
 router
   .route('/:id')
   .get(userController.getUser)
-  .delete(authController.protect, authController.restrictTo('admin') ,userController.deleteUser);
+  .delete(
+    authController.protect,
+    authController.restrictTo('admin'),
+    userController.deleteUser
+  );
 
 module.exports = router;
