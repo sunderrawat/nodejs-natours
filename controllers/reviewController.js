@@ -26,26 +26,7 @@ exports.createReview = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getAllReview = catchAsync(async (req, res, next) => {
-  let filter = {};
-  if (req.params.tourId) filter = { tour: req.params.tourId };
-  const reviews = await Review.find(filter);
-
-  res.status(200).json({
-    status: 'success',
-    result: reviews.length,
-    data: reviews,
-  });
-});
-
-exports.getOneReview = catchAsync(async (req, res, next) => {
-  const review = await Review.findById(req.params.id);
-
-  res.status(200).json({
-    status: 'success',
-    data: review,
-  });
-});
-
+exports.getAllReviews = factory.getAll(Review);
+exports.getOneReview = factory.getOne(Review);
 exports.updateReview = factory.updateOne(Review);
 exports.deleteOneReview = factory.deleteOne(Review);

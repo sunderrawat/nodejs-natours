@@ -12,31 +12,10 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-//users route handeler
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-
-  res.status(200).json({
-    status: 'success',
-    users,
-  });
-});
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'fail',
-    message: 'route not yet defined',
-  });
-};
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'fail',
-    message: 'route not yet defined',
-  });
-};
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'fail',
-    message: 'route not yet defined',
+    message: 'this route is not working go to /api/v1/signup',
   });
 };
 
@@ -72,4 +51,6 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
 exports.deleteUser = factory.deleteOne(User);
