@@ -1,4 +1,5 @@
 const Review = require('./../model/reviewModel');
+const factory = require('./handlerFactory')
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
@@ -44,10 +45,4 @@ exports.getOneReview = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteOneReview = catchAsync(async (req, res, next) => {
-  const review = await Review.findByIdAndDelete(req.params.id);
-
-  res.status(204).json({
-    status: 'success',
-  });
-});
+exports.deleteOneReview = factory.deleteOne(Review);
