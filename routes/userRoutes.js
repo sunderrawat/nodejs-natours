@@ -10,6 +10,7 @@ router.route('/login').post(authController.login);
 router.route('/forgotPassword').post(authController.forgotPassword);
 router.route('/resetPassword/:resetToken').patch(authController.resetPassword);
 
+const app = express();
 //this middelware is use for protecting all routes
 app.use(authController.protect);
 
