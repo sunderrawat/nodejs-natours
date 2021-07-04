@@ -10,17 +10,17 @@ router.route('/login').post(authController.login);
 router.route('/forgotPassword').post(authController.forgotPassword);
 router.route('/resetPassword/:resetToken').patch(authController.resetPassword);
 
-router.get('/me', authController.protect, userController.getMe, userController.getUser);
+//this middelware is use for protecting all routes
+app.use(authController.protect);
 
-router
-  .route('/updateMyPassword')
-  .patch(authController.protect, authController.updatePassword);
-router
-  .route('/updateMe')
-  .patch(authController.protect, userController.updateMe);
+router.get('/me', userController.getMe, userController.getUser);
 
-router.delete('/deleteMe', authController.protect, userController.deleteMe);
+router.route('/updateMyPassword').patch(authController.updatePassword);
+router.route('/updateMe').patch(userController.updateMe);
 
+router.delete('/deleteMe', userController.deleteMe);
+
+app.use(authController.restrictTo('admin'));
 router
   .route('/')
   .get(userController.getAllUsers)
@@ -28,10 +28,6 @@ router
 router
   .route('/:id')
   .get(userController.getUser)
-  .delete(
-    authController.protect,
-    authController.restrictTo('admin'),
-    userController.deleteUser
-  );
+  .delete(userController.deleteUser);
 
 module.exports = router;

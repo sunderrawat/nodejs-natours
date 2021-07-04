@@ -10,10 +10,22 @@ router.use('/:tourId/reviews', reviewRouter);
 
 router
   .route('/top-5-tours')
-  .get(tourController.aliasTopTour, tourController.getAllTours);
+  .get(authController.protect, authController.restrictTo('admin', 'lead-guide'),tourController.aliasTopTour, tourController.getAllTours);
 
-router.route('/tour-stats').get(tourController.getTourStats);
-router.route('/get-monthly-plan/:year').get(tourController.getMonthlyPlan);
+router
+  .route('/tour-stats')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.getTourStats
+  );
+router
+  .route('/get-monthly-plan/:year')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.getMonthlyPlan
+  );
 
 router
   .route('/')
