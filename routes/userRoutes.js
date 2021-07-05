@@ -10,9 +10,8 @@ router.route('/login').post(authController.login);
 router.route('/forgotPassword').post(authController.forgotPassword);
 router.route('/resetPassword/:resetToken').patch(authController.resetPassword);
 
-const app = express();
-//this middelware is use for protecting all routes
-app.use(authController.protect);
+// Protect all routes after this middleware
+router.use(authController.protect);
 
 router.get('/me', userController.getMe, userController.getUser);
 
@@ -21,7 +20,7 @@ router.route('/updateMe').patch(userController.updateMe);
 
 router.delete('/deleteMe', userController.deleteMe);
 
-app.use(authController.restrictTo('admin'));
+router.use(authController.restrictTo('admin'));
 router
   .route('/')
   .get(userController.getAllUsers)
