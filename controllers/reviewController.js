@@ -8,15 +8,16 @@ exports.createReview = catchAsync(async (req, res, next) => {
   if (!req.body.tour) req.body.tour = req.params.tourId;
   if (!req.body.user) req.body.user = req.user.id;
 
-  const getAllReviews = await Review.find();
-  const sameUserReview = getAllReviews.filter((review) => {
-    return review.tour == req.body.tour && review.user.id == req.body.user;
-  });
-  if (sameUserReview.length > 0) {
-    return next(
-      new AppError('You are already provide review on this tour', 208)
-    );
-  }
+  //for one tour for one user one review preventing duplicate review
+  // const getAllReviews = await Review.find();
+  // const sameUserReview = getAllReviews.filter((review) => {
+  //   return review.tour == req.body.tour && review.user.id == req.body.user;
+  // });
+  // if (sameUserReview.length > 0) {
+  //   return next(
+  //     new AppError('You are already provide review on this tour', 208)
+  //   );
+  // }
 
   const review = await Review.create(req.body);
 
