@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const pug = require('pug');
+const cookieParser = require('cookie-parser');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -27,7 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //middelware
 // global middelware
-
+app.use(cookieParser());
 // set security http header
 app.use(helmet());
 

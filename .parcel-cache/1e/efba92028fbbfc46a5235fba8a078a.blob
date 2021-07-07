@@ -1,0 +1,6 @@
+var _mapbox = require('./mapbox');
+const mapId = document.getElementById('map');
+if (mapId) {
+  const locations = JSON.parse(mapId.dataset.locations);
+  _mapbox.displayMap(locations);
+}
