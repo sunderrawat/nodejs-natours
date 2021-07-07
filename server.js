@@ -1,2 +1,38 @@
-const o=document.getElementById("map");if(o){(o=>{mapboxgl.accessToken="pk.eyJ1Ijoic3VuZGVycmF3YXQiLCJhIjoiY2ttZGZocnRsMjVqNzJwbGFuYzBwYjZ2YyJ9.ZoCQNopH2tGhTPosdd5mWQ";var t=new mapboxgl.Map({container:"map",style:"mapbox://styles/sunderrawat/ckqsvqz29072b18obnsfzpjiu",scrollZoom:!1});const e=new mapboxgl.LngLatBounds;o.forEach((o=>{const a=document.createElement("div");a.className="marker",new mapboxgl.Marker({element:a,anchor:"bottom"}).setLngLat(o.coordinates).addTo(t),new mapboxgl.Popup({offset:30}).setLngLat(o.coordinates).setHTML(`<p>Day ${o.day}: ${o.description}</p>`).addTo(t),e.extend(o.coordinates)})),t.fitBounds(e,{padding:{top:200,bottom:150,left:100,right:100}})})(JSON.parse(o.dataset.locations))}
-//# sourceMappingURL=server.js.map
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+dotenv.config({ path: './config.env' });
+const app = require('./app');
+
+const port = process.env.PORT || 3000;
+
+process.on('uncaughtException', (err) => {
+  console.log(err.name, err.message);
+  console.log('Unhandeled Exception error 💥 shutting down server....💥');
+  process.exit(1);
+});
+
+mongoose
+  .connect(process.env.DATABASE_LOCAL, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+  })
+  .then((con) => {
+    console.log('DB connected sucessfully...');
+  })
+  .catch((err) => {
+    console.log('error in database during connection 💥');
+  });
+
+const server = app.listen(port, () => {
+  console.log('app is listening on port ', port);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.log(err.name, err.message);
+  console.log('Unhandeled Rejection 💥 shutting down server....💥');
+  server.close(() => {
+    process.exit(1);
+  });
+});
