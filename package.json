@@ -14,6 +14,7 @@
   "author": "Sunder Rawat",
   "license": "ISC",
   "dependencies": {
+    "@babel/polyfill": "^7.4.4",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.5",
@@ -28,12 +29,13 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.6.2",
     "pug": "^3.0.2",
+    "regenerator-runtime": "^0.13.7",
     "slugify": "^1.5.3",
     "validator": "^13.6.0",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
     "ndb": "^1.1.5",
-    "parcel-bundler": "^1.12.5"
+    "parcel-bundler": "^1.9.4"
   }
 }
