@@ -11,6 +11,7 @@ const pug = require('pug');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const viewRouter = require('./routes/viewRoutes');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
@@ -76,9 +77,7 @@ app.use(
 //mounting routes
 
 //views routes or client side routes
-app.get('/', (req, res) => {
-  res.status(200).render('base');
-});
+app.use('/', viewRouter);
 
 //api routes
 app.use('/api/v1/tours', tourRouter);
