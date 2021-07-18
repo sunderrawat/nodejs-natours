@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { promisify } = require('util');
 const User = require('./../model/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
@@ -24,10 +25,15 @@ const createSendTokenRes = (user, statusCode, res) => {
   //create cookie and send to browser
   res.cookie('jwt', token, cookieOptions);
 
+  user.password = undefined;
+
   res.status(statusCode).json({
     status: 'success',
     statusCode,
     token,
+    data: {
+      user,
+    },
   });
 };
 
@@ -64,6 +70,14 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendTokenRes(user, 200, res);
 });
 
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: 'success' });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
   //1. check if token is available
   let token;
@@ -91,14 +105,15 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   //check if user changed password after token issued
-  if (currentUser.passwordChangedAfter(decoded.iat)) {
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
       new AppError('user recently changed password! please log in again', 401)
     );
   }
 
-  //Grant access for protected routes
+  // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
+  res.locals.user = currentUser;
   next();
 });
 
