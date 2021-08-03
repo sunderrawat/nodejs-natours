@@ -4,7 +4,7 @@ const { promisify } = require('util');
 const User = require('./../model/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
-const sendEmail = require('./../utils/email');
+const Email = require('./../utils/email');
 
 const genrateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -44,6 +44,9 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
+
+  const url = `${req.protocol}://${req.get('host')}/me`;
+  await new Email(newUser, url).sendWelcome();
 
   //create jwt token
   createSendTokenRes(newUser, 201, res);
@@ -177,11 +180,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const message = `Forgot your password? Submit with new password and confirmPassword to: ${resetUrl}. \n If you didn't forgot password then ignore it.`;
 
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Forgot Your Password for Natours',
-      message,
-    });
+    await new Email(user, resetUrl).sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
