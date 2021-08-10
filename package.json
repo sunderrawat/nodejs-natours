@@ -43,5 +43,8 @@
   "devDependencies": {
     "ndb": "^1.1.5",
     "parcel-bundler": "^1.9.4"
+  },
+  "engines": {
+    "node": "^10"
   }
 }
