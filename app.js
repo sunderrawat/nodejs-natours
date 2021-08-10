@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
-// const helmet = require('helmet');
+const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
@@ -47,7 +47,7 @@ app.options('*', cors()) //allow to use our api to all http method to perform
 
 app.use(cookieParser());
 // set security http header
-// app.use(helmet());
+app.use(helmet());
 
 // app.use((req,res, next)=>{
 //   console.log(req.originalUrl)
