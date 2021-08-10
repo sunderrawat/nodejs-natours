@@ -9,6 +9,7 @@ const hpp = require('hpp');
 const pug = require('pug');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -32,6 +33,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //middelware
 // global middelware
+//implement cors
+app.use(cors());  //allow to use our api to everyone
+
+// Access-Control-Allow-Origin *
+// api.natours.com, front-end natours.com
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }))
+
+app.options('*', cors()) //allow to use our api to all http method to perform
+
+
 app.use(cookieParser());
 // set security http header
 // app.use(helmet());
