@@ -175,10 +175,10 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
-tourSchema.post(/^find/, function (doc, next) {
-  console.log('time for post ', Date.now() - this.start, ' milliseconds');
-  next();
-});
+// tourSchema.post(/^find/, function (doc, next) {
+//   console.log('time for post ', Date.now() - this.start, ' milliseconds');
+//   next();
+// });
 
 //aggregation middelware
 // tourSchema.pre('aggregate', function (next) {

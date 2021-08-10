@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const pug = require('pug');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -18,6 +19,8 @@ const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
+
+app.enable('trust proxy')
 
 //set view engine
 app.set('view engine', 'pug');
@@ -81,6 +84,8 @@ app.use(
     ],
   })
 );
+
+app.use(compression());
 
 //Routes
 //mounting routes
