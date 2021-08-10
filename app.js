@@ -21,7 +21,7 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 
-app.enable('trust proxy')
+app.enable('trust proxy');
 
 //set view engine
 app.set('view engine', 'pug');
@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //middelware
 // global middelware
 //implement cors
-app.use(cors());  //allow to use our api to everyone
+app.use(cors()); //allow to use our api to everyone
 
 // Access-Control-Allow-Origin *
 // api.natours.com, front-end natours.com
@@ -42,12 +42,45 @@ app.use(cors());  //allow to use our api to everyone
 //   origin: 'https://www.natours.com'
 // }))
 
-app.options('*', cors()) //allow to use our api to all http method to perform
-
+app.options('*', cors()); //allow to use our api to all http method to perform
 
 app.use(cookieParser());
 // set security http header
-app.use(helmet());
+// app.use(helmet());
+//use for resolving mapbox error
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'", 'data:', 'blob:'],
+
+      baseUri: ["'self'"],
+
+      fontSrc: ["'self'", 'https:', 'data:'],
+
+      scriptSrc: ["'self'", 'https://*.cloudflare.com'],
+
+      scriptSrc: ["'self'", 'https://*.stripe.com'],
+
+      scriptSrc: ["'self'", 'http:', 'https://*.mapbox.com', 'data:'],
+
+      frameSrc: ["'self'", 'https://*.stripe.com'],
+
+      objectSrc: ["'none'"],
+
+      styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+
+      workerSrc: ["'self'", 'data:', 'blob:'],
+
+      childSrc: ["'self'", 'blob:'],
+
+      imgSrc: ["'self'", 'data:', 'blob:'],
+
+      connectSrc: ["'self'", 'blob:', 'https://*.mapbox.com'],
+
+      upgradeInsecureRequests: [],
+    },
+  })
+);
 
 // app.use((req,res, next)=>{
 //   console.log(req.originalUrl)
